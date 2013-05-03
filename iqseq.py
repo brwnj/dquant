@@ -4,7 +4,7 @@
 De novo identification and quantification of sequence data.
 """
 import sys
-import dquant_utils as du
+import iqseq_utils as du
 
 __version__ = "0.1"
 

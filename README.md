@@ -3,7 +3,7 @@
 De novo identification and quantification of sequence data.
 
 ```
-usage: dquant.py [-h] [-v] {consensus,quantify} ...
+usage: iqseq.py [-h] [-v] {consensus,quantify} ...
 
 De novo identification and quantification of sequence data.
 
@@ -20,7 +20,7 @@ optional arguments:
 ##Quantifying sequences in FASTQ
 
 ```
-usage: dquant.py quantify [-h] [-m MISMATCH] FASTQ
+usage: iqseq.py quantify [-h] [-m MISMATCH] FASTQ
 
 Find and quantify unique and similar sequences within a FASTQ.
 
