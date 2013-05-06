@@ -108,9 +108,12 @@ def process_similar(counter, t, n):
     seqs = list(counter)
     seqs.sort(key=len, reverse=True)
     lengths = sorted(set([len(k) for k in seqs]))
+    progress = 100
+    to_process = len(seqs)
     for i, seq in enumerate(seqs, start=1):
-        if i % 100 == 0:
-            print >>sys.stderr, i
+        if i % progress == 0:
+            progress = int(progress * 1.5)
+            print >>sys.stderr, "processed %d of %d" % (i, to_process)
         if counter[seq] == 0: continue
         for (k, v, dist) in unique_everseen(t.get_approximate(seq, n), lambda (m,c,d): m):
             if dist == 0 or k == seq: continue
