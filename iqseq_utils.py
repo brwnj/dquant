@@ -1,7 +1,8 @@
 #!/usr/bin/env python
 # encoding: utf-8
 
-from toolshed import nopen
+import sys
+from toolshed import nopen, reader
 from Bio import trie, triefind
 from collections import Counter
 from itertools import islice, ifilterfalse
@@ -25,40 +26,61 @@ def trim_seq(seq, base=5):
     """round length of sequence to nearest `base`"""
     return seq[:int(base * round(len(seq)/base))]
 
-def process_exact_fastq(fastq):
+def process_exact_fastq(fastq, n):
     """Group identical reads using a Counter. Returns Counter."""
     c = Counter()
     with nopen(fastq) as fh:
         for name, seq, qual in read_fastq(fh):
-            c.update([trim_seq(seq, 4)])
+            seq = trim_seq(seq, 4)
+            if len(seq) < n: continue
+            c.update([seq])
     return c
 
 def process_exact_txt(files, cutoff):
     """returns Counter from multiple quantify runs"""
     c = Counter()
-    for f in args.bins:
+    for f in files:
         for l in reader(f, header=['seq','count']):
             if l['count'] < cutoff: continue
             c.update([l['seq']])
     return c
 
 def chunker(it, n):
+    # chunker('AAAABBBC', 4) --> AAAA AAAB AABB ABBB BBBC
     return [it[i:i+n] for i in xrange(0, len(it)+1-n, 1)]
 
-def construct_trie(counter):
+def construct_simple_trie(counter):
     """build suffix tree from Counter"""
     t = trie.trie()
     for seq, count in counter.iteritems():
         t[seq] = count
     return t
 
-def process_exact_substring(counter, tree):
+def construct_complex_trie(counter):
+    """build suffix tree from Counter"""
+    t = trie.trie()
+    seqs = list(counter)
+    seqs.sort(key=len, reverse=True)
+    lengths = sorted(set([len(k) for k in seqs]))
+    for seq in seqs:
+        seq_len = len(seq)
+        for l in lengths:
+            if l > seq_len: continue
+            for subseq in chunker(seq, l):
+                if t.has_key(subseq): continue
+                if subseq == seq:
+                    t[seq] = counter[seq]
+                else:
+                    t[subseq] = seq
+    return t
+
+def process_exact_substring(counter, t):
     """use triefind.find to gather identical substring matches"""
     seqs = list(counter)
     seqs.sort(key=len, reverse=True)
     for seq in seqs:
         l = len(seq)
-        for (match, start, end) in triefind.find(seq, tree):
+        for (match, start, end) in triefind.find(seq, t):
             if len(match) == l: continue
             counter[seq] += counter[match]
             counter[match] = 0
@@ -82,20 +104,22 @@ def unique_everseen(iterable, key=None):
                 seen_add(k)
                 yield element
 
-def process_similar(counter, tree, n):
+def process_similar(counter, t, n):
     seqs = list(counter)
     seqs.sort(key=len, reverse=True)
     lengths = sorted(set([len(k) for k in seqs]))
-    for seq in seqs:
+    for i, seq in enumerate(seqs, start=1):
+        if i % 100 == 0:
+            print >>sys.stderr, i
         if counter[seq] == 0: continue
-        for l in lengths:
-            if l > len(seq): continue
-            for subseq in chunker(seq, l):
-                for (match, count, dist) in unique_everseen(\
-                            tree.get_approximate(subseq, n), lambda (m,c,d): m):
-                    if dist == 0 or count == 0 or match == seq: continue
-                    counter[seq] += counter[match]
-                    counter[match] = 0
-                    tree[match] = 0
+        for (k, v, dist) in unique_everseen(t.get_approximate(seq, n), lambda (m,c,d): m):
+            if dist == 0 or k == seq: continue
+            if type(v) is int:
+                counter[seq] += counter[k]
+                counter[k] = 0
+            else:
+                # k is a subsequence; therefore add seq to v
+                counter[v] += counter[seq]
+                counter[seq] = 0
     counter += Counter()
     return counter
