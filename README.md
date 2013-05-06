@@ -9,8 +9,8 @@ De novo identification and quantification of sequence data.
 
 positional arguments:
   {consensus,quantify}  commands
-    quantify
-    consensus
+    quantify            quantify unique and similar sequences
+    consensus           build observed sequence library
 
 optional arguments:
   -h, --help            show this help message and exit
@@ -20,7 +20,7 @@ optional arguments:
 ##Quantifying sequences in FASTQ
 
 ```
-usage: iqseq.py quantify [-h] [-m MISMATCH] FASTQ
+usage: iqseq.py quantify [-h] [-l LENGTH] [-m MISMATCH] FASTQ
 
 Find and quantify unique and similar sequences within a FASTQ.
 
@@ -29,5 +29,22 @@ positional arguments:
 
 optional arguments:
   -h, --help   show this help message and exit
+  -c CUTOFF    minimum allowable seq length [18]
+  -m MISMATCH  mismatch tolerance when grouping bins [3]
+```
+
+##Finding consensus of observed sequences
+
+```
+usage: iqseq.py consensus [-h] [-c CUTOFF] [-m MISMATCH] BINS [BINS ...]
+
+Build consensus of sequences across all samples.
+
+positional arguments:
+  BINS         results of `quantify`
+
+optional arguments:
+  -h, --help   show this help message and exit
+  -c CUTOFF    minimum allowable count [10]
   -m MISMATCH  mismatch tolerance when grouping bins [3]
 ```
