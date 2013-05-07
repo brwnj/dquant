@@ -20,7 +20,7 @@ optional arguments:
 ##Quantifying sequences in FASTQ
 
 ```
-usage: iqseq.py quantify [-h] [-l LENGTH] [-m MISMATCH] FASTQ
+usage: iqseq.py quantify [-h] [-c CUTOFF] [-m MISMATCH] FASTQ
 
 Find and quantify unique and similar sequences within a FASTQ.
 
