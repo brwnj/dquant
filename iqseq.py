@@ -42,16 +42,6 @@ def run_consensus(args):
     print "\n".join(s)
 
 def run_matrix(args):
-    """
-    d = {}
-    for each sample...
-        d[sample] = {}
-        build trie with this samples sequences = count
-        for each bin, find the sequences that match this bin += the count
-        d[sample][bin_sequence] = count
-    dict of dicts to dataframe
-    print dataframe
-    """
     seqbins, lengths = iu.get_seq_bins(args.consensus)
     d = {}
     for f in args.counts:
