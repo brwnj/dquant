@@ -3,14 +3,16 @@
 De novo identification and quantification of sequence data.
 
 ```
-usage: iqseq.py [-h] [-v] {consensus,quantify} ...
+usage: iqseq.py [-h] [-v] {consensus,quantify,matrix} ...
 
 De novo identification and quantification of sequence data.
 
 positional arguments:
-  {consensus,quantify}  commands
+  {consensus,quantify,matrix}
+                        commands
     quantify            quantify unique and similar sequences
     consensus           build observed sequence library
+    matrix              generate counts matrix
 
 optional arguments:
   -h, --help            show this help message and exit
@@ -47,4 +49,20 @@ optional arguments:
   -h, --help   show this help message and exit
   -c CUTOFF    minimum allowable count [10]
   -m MISMATCH  mismatch tolerance when grouping bins [3]
+```
+
+##Counts of observed sequences across consensus bins
+
+```
+usage: iqseq.py matrix [-h] [-m MISMATCH] consensus counts [counts ...]
+
+Generate counts matrix
+
+positional arguments:
+  consensus    result of `consensus`
+  counts       results of `quantify`
+
+optional arguments:
+  -h, --help   show this help message and exit
+  -m MISMATCH
 ```
