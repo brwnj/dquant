@@ -2,6 +2,7 @@
 # encoding: utf-8
 
 import sys
+import pandas as pd
 from toolshed import nopen, reader
 from Bio import trie, triefind
 from collections import Counter
@@ -45,6 +46,18 @@ def process_exact_txt(files, cutoff):
             c.update([l['seq']])
     return c
 
+def process_counted(fp):
+    c = Counter()
+    for l in reader(fp, header=['seq','count']):
+        c[l['seq']] = int(l['count'])
+    return c
+
+def get_seq_bins(fp):
+    c = Counter()
+    for l in nopen(fp):
+        c[l.strip()] = 0
+    return c, sorted(set([len(i) for i in c.keys()]))
+
 def chunker(it, n):
     # chunker('AAAABBBC', 4) --> AAAA AAAB AABB ABBB BBBC
     return [it[i:i+n] for i in xrange(0, len(it)+1-n, 1)]
@@ -56,12 +69,13 @@ def construct_simple_trie(counter):
         t[seq] = count
     return t
 
-def construct_complex_trie(counter):
+def construct_complex_trie(counter, lengths=None):
     """build suffix tree from Counter"""
     t = trie.trie()
     seqs = list(counter)
     seqs.sort(key=len, reverse=True)
-    lengths = sorted(set([len(k) for k in seqs]))
+    if lengths is None:
+        lengths = sorted(set([len(k) for k in seqs]))
     for seq in seqs:
         seq_len = len(seq)
         for l in lengths:
@@ -126,3 +140,28 @@ def process_similar(counter, t, n):
                 counter[seq] = 0
     counter += Counter()
     return counter
+
+def process_similar_matrix(bins, seqs, t, n):
+    binseqs = list(bins)
+    binseqs.sort(key=len, reverse=True)
+    to_process = len(binseqs)
+    progress = 100
+    for i, seq in enumerate(binseqs, start=1):
+        if i % progress == 0:
+            progress = int(progress * 1.5)
+            print >>sys.stderr, "    >> processed %d of %d" % (i, to_process)
+        for (k, v, dist) in unique_everseen(t.get_approximate(seq, n), lambda (m,c,d): m):
+            # if type(v) is int:
+            if type(v) is int:
+                bins[seq] += seqs[seq]
+                # set to zero? avoids adding counts to multiple bins
+                seqs[seq] = 0
+            else:
+                bins[seq] += seqs[v]
+                seqs[v] = 0
+    return bins
+
+def write_table(d):
+    """docstring for write_table"""
+    df = pd.DataFrame(d)
+    df.to_csv(sys.stdout, sep="\t")

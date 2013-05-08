@@ -4,6 +4,7 @@
 De novo identification and quantification of sequence data.
 """
 import sys
+import os.path as op
 import iqseq_utils as iu
 
 __version__ = "0.1"
@@ -41,8 +42,30 @@ def run_consensus(args):
     print "\n".join(s)
 
 def run_matrix(args):
-    """docstring for run_matrix"""
-    pass
+    """
+    d = {}
+    for each sample...
+        d[sample] = {}
+        build trie with this samples sequences = count
+        for each bin, find the sequences that match this bin += the count
+        d[sample][bin_sequence] = count
+    dict of dicts to dataframe
+    print dataframe
+    """
+    seqbins, lengths = iu.get_seq_bins(args.consensus)
+    d = {}
+    for f in args.counts:
+        sample = op.splitext(op.basename(f))[0]
+        print >>sys.stderr, ">> processing sample %s" % sample
+        d[sample] = {}
+        # the sequence counts of each sample
+        seqs = iu.process_counted(f)
+        t = iu.construct_complex_trie(seqs, lengths)
+        # process the sequences
+        seqbins = iu.process_similar_matrix(seqbins, seqs, t, args.mismatch)
+        for k, v in seqbins.iteritems():
+            d[sample][k] = v
+    iu.write_table(d)
 
 def main(args):
     args.func(args)
@@ -75,9 +98,10 @@ if __name__ == '__main__':
             help="mismatch tolerance when grouping bins [%(default)s]")
     fcons.set_defaults(func=run_consensus)
     
-    fmat = subp.add_parser('matrix', description="", help="")
-    fmat.add_argument("consensus", help="")
-    fmat.add_argument("counts", nargs="+", help="")
+    fmat = subp.add_parser('matrix', description="Generate counts matrix",
+            help="generate counts matrix")
+    fmat.add_argument("consensus", help="result of `consensus`")
+    fmat.add_argument("counts", nargs="+", help="results of `quantify`")
     fmat.add_argument("-m", dest="mismatch", type=int, default=3, help="")
     fmat.set_defaults(func=run_matrix)
     
