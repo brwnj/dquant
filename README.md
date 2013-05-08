@@ -54,13 +54,13 @@ optional arguments:
 ##Counts of observed sequences across consensus bins
 
 ```
-usage: iqseq.py matrix [-h] [-m MISMATCH] consensus counts [counts ...]
+usage: iqseq.py matrix [-h] [-m MISMATCH] CONSENSUS COUNTS [COUNTS ...]
 
 Generate counts matrix
 
 positional arguments:
-  consensus    result of `consensus`
-  counts       results of `quantify`
+  CONSENSUS    result of `consensus`
+  COUNTS       results of `quantify`
 
 optional arguments:
   -h, --help   show this help message and exit

@@ -100,8 +100,8 @@ if __name__ == '__main__':
     
     fmat = subp.add_parser('matrix', description="Generate counts matrix",
             help="generate counts matrix")
-    fmat.add_argument("consensus", help="result of `consensus`")
-    fmat.add_argument("counts", nargs="+", help="results of `quantify`")
+    fmat.add_argument("consensus", metavar="CONSENSUS", help="result of `consensus`")
+    fmat.add_argument("counts", metavar="COUNTS", nargs="+", help="results of `quantify`")
     fmat.add_argument("-m", dest="mismatch", type=int, default=3, help="")
     fmat.set_defaults(func=run_matrix)
     
