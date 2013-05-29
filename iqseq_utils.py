@@ -63,14 +63,12 @@ def chunker(it, n):
     return [it[i:i+n] for i in xrange(0, len(it)+1-n, 1)]
 
 def construct_simple_trie(counter):
-    """build suffix tree from Counter"""
     t = trie.trie()
     for seq, count in counter.iteritems():
         t[seq] = count
     return t
 
 def construct_complex_trie(counter, lengths=None):
-    """build suffix tree from Counter"""
     t = trie.trie()
     seqs = list(counter)
     seqs.sort(key=len, reverse=True)
@@ -102,9 +100,6 @@ def process_exact_substring(counter, t):
     return counter
 
 def unique_everseen(iterable, key=None):
-    "List unique elements, preserving order. Remember all elements ever seen."
-    # unique_everseen('AAAABBBCCDAABBB') --> A B C D
-    # unique_everseen('ABBCcAD', str.lower) --> A B C D
     seen = set()
     seen_add = seen.add
     if key is None:
@@ -162,6 +157,5 @@ def process_similar_matrix(bins, seqs, t, n):
     return bins
 
 def write_table(d):
-    """docstring for write_table"""
     df = pd.DataFrame(d)
     df.to_csv(sys.stdout, sep="\t")
