@@ -45,11 +45,13 @@ def run_matrix(args):
     seqbins, lengths = iu.get_seq_bins(args.consensus)
     d = {}
     samples = set()
+    to_process = len(args.counts)
     for i, f in enumerate(args.counts, start=1):
         sample = op.splitext(op.basename(f))[0]
         samples.add(sample)
         assert len(samples) == i
-        print >>sys.stderr, ">> processing sample %s" % sample
+        print >>sys.stderr, ">> processing sample %s (%d/%d)" % \
+                                                        (sample, i, to_process)
         d[sample] = {}
         # the sequence counts of each sample
         seqs = iu.process_counted(f)
