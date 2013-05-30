@@ -7,7 +7,7 @@ import sys
 import os.path as op
 import iqseq_utils as iu
 
-__version__ = "0.1"
+__version__ = "0.2"
 
 def run_quantify(args):
     print >>sys.stderr, ">> collapsing identical sequences (1/5)"
@@ -44,8 +44,11 @@ def run_consensus(args):
 def run_matrix(args):
     seqbins, lengths = iu.get_seq_bins(args.consensus)
     d = {}
-    for f in args.counts:
+    samples = set()
+    for i, f in enumerate(args.counts, start=1):
         sample = op.splitext(op.basename(f))[0]
+        samples.add(sample)
+        assert len(samples) == i
         print >>sys.stderr, ">> processing sample %s" % sample
         d[sample] = {}
         # the sequence counts of each sample
