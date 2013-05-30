@@ -82,7 +82,7 @@ if __name__ == '__main__':
             help="build observed sequence library")
     fcons.add_argument('bins', metavar='BINS', nargs="+",
             help="results of `quantify`")
-    fcons.add_argument('-c', dest='cutoff', type=int, default=10,
+    fcons.add_argument('-c', dest='cutoff', type=int, default=100,
             help="minimum allowable count [%(default)s]")
     fcons.add_argument('-m', dest='mismatch', type=int, default=3,
             help="mismatch tolerance when grouping bins [%(default)s]")
