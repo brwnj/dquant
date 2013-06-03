@@ -42,24 +42,31 @@ def run_consensus(args):
     print "\n".join(s)
 
 def run_matrix(args):
-    seqbins, lengths = iu.get_seq_bins(args.consensus)
     d = {}
     samples = set()
     to_process = len(args.counts)
+
     for i, f in enumerate(args.counts, start=1):
+
         sample = op.splitext(op.basename(f))[0]
         samples.add(sample)
         assert len(samples) == i
-        print >>sys.stderr, ">> processing sample %s (%d/%d)" % \
-                                                        (sample, i, to_process)
+        print >>sys.stderr, (">> processing sample {sample} "
+                                "({i}/{to_process})").format(**locals())
+
         d[sample] = {}
-        # the sequence counts of each sample
-        seqs = iu.process_counted(f)
-        t = iu.construct_complex_trie(seqs, lengths)
+        # the sequence counts of current sample
+        seqs = iu.process_counted(f, args.cutoff)
+        seq_lengths = sorted(set([len(k) for k in list(seqs)]))
+        seq_bins = iu.get_seq_bins(args.consensus)
+        # trie based on sequences of bins at lengths of query sequences
+        t = iu.construct_complex_trie(seq_bins, seq_lengths)
         # process the sequences
-        seqbins = iu.process_similar_matrix(seqbins, seqs, t, args.mismatch)
-        for k, v in seqbins.iteritems():
+        counts = iu.process_similar_matrix(seq_bins, seqs, t, args.mismatch)
+
+        for k, v in counts.iteritems():
             d[sample][k] = v
+
     iu.write_table(d)
 
 def main(args):
@@ -72,8 +79,8 @@ if __name__ == '__main__':
     subp = p.add_subparsers(help='commands')
     
     fquant = subp.add_parser('quantify',
-            description="Find and quantify unique and similar sequences \
-            within a FASTQ.",
+            description=("Find and quantify unique and similar sequences "
+                            "within a FASTQ."),
             help="quantify unique and similar sequences")
     fquant.add_argument("fastq", metavar="FASTQ", help="reads to process")
     fquant.add_argument("-c", dest="cutoff", type=int, default=18,
@@ -95,9 +102,15 @@ if __name__ == '__main__':
     
     fmat = subp.add_parser('matrix', description="Generate counts matrix",
             help="generate counts matrix")
-    fmat.add_argument("consensus", metavar="CONSENSUS", help="result of `consensus`")
-    fmat.add_argument("counts", metavar="COUNTS", nargs="+", help="results of `quantify`")
-    fmat.add_argument("-m", dest="mismatch", type=int, default=3, help="")
+    fmat.add_argument("consensus", metavar="CONSENSUS",
+            help="result of `consensus`")
+    fmat.add_argument("counts", metavar="COUNTS", nargs="+",
+            help="results of `quantify`")
+    fmat.add_argument('-c', dest='cutoff', type=int, default=100,
+            help=("minimum allowable count for individual sample "
+                    "sequences [%(default)s]"))
+    fmat.add_argument("-m", dest="mismatch", type=int, default=3,
+            help="mismatch tolerance when grouping bins [%(default)s]")
     fmat.set_defaults(func=run_matrix)
     
     args = p.parse_args()

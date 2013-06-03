@@ -46,17 +46,20 @@ def process_exact_txt(files, cutoff):
             c.update([l['seq']])
     return c
 
-def process_counted(fp):
+def process_counted(fp, cutoff):
     c = Counter()
     for l in reader(fp, header=['seq','count']):
-        c[l['seq']] = int(l['count'])
+        count = int(l['count'])
+        if count < cutoff: continue
+        c[l['seq']] = count
     return c
 
 def get_seq_bins(fp):
+    """fp to text. no ints on this input."""
     c = Counter()
     for l in nopen(fp):
         c[l.strip()] = 0
-    return c, sorted(set([len(i) for i in c.keys()]))
+    return c
 
 def chunker(it, n):
     # chunker('AAAABBBC', 4) --> AAAA AAAB AABB ABBB BBBC
@@ -114,6 +117,7 @@ def unique_everseen(iterable, key=None):
                 yield element
 
 def process_similar(counter, t, n):
+    """trie is composed of sequences being compared."""
     seqs = list(counter)
     seqs.sort(key=len, reverse=True)
     lengths = sorted(set([len(k) for k in seqs]))
@@ -137,23 +141,37 @@ def process_similar(counter, t, n):
     return counter
 
 def process_similar_matrix(bins, seqs, t, n):
-    binseqs = list(bins)
-    binseqs.sort(key=len, reverse=True)
-    to_process = len(binseqs)
+    """
+    bins - sequence bins
+    seqs - sequences to bin
+    t    - trie
+    n    - mismatches
+    
+    returns Counter
+    """
+    sample_seqs = list(seqs)
+    sample_seqs.sort(key=len, reverse=True)
+    to_process = len(sample_seqs)
     progress = 100
-    for i, seq in enumerate(binseqs, start=1):
+    
+    for i, seq in enumerate(sample_seqs, start=1):
+        
         if i % progress == 0:
             progress = int(progress * 1.5)
-            print >>sys.stderr, "    >> processed %d of %d" % (i, to_process)
+            print >>sys.stderr, "    >> processed {i} of {to_process}".format(**locals())
+        
+        # returning bins to which the sequence belongs
         for (k, v, dist) in unique_everseen(t.get_approximate(seq, n), lambda (m,c,d): m):
-            # if type(v) is int:
+
             if type(v) is int:
-                bins[seq] += seqs[seq]
+                bins[k] += seqs[seq]
                 # set to zero? avoids adding counts to multiple bins
                 seqs[seq] = 0
+
             else:
-                bins[seq] += seqs[v]
-                seqs[v] = 0
+                bins[v] += seqs[seq]
+                seqs[seq] = 0
+
     return bins
 
 def write_table(d):
