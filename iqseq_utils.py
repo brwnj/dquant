@@ -42,7 +42,7 @@ def process_exact_txt(files, cutoff):
     c = Counter()
     for f in files:
         for l in reader(f, header=['seq','count']):
-            if l['count'] < cutoff: continue
+            if int(l['count']) < cutoff: continue
             c.update([l['seq']])
     return c
 
