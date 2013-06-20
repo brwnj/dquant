@@ -54,7 +54,8 @@ optional arguments:
 ##Counts of observed sequences across consensus bins
 
 ```
-usage: iqseq.py matrix [-h] [-m MISMATCH] CONSENSUS COUNTS [COUNTS ...]
+usage: iqseq.py matrix [-h] [-c CUTOFF] [-m MISMATCH]
+                       CONSENSUS COUNTS [COUNTS ...]
 
 Generate counts matrix
 
@@ -64,5 +65,6 @@ positional arguments:
 
 optional arguments:
   -h, --help   show this help message and exit
-  -m MISMATCH
+  -c CUTOFF    minimum allowable count for individual sample sequences [100]
+  -m MISMATCH  mismatch tolerance when grouping bins [3]
 ```
