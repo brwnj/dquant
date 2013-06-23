@@ -2,7 +2,6 @@
 # encoding: utf-8
 
 import sys
-import numpy as np
 import pandas as pd
 from toolshed import nopen, reader
 from Bio import trie, triefind
@@ -175,20 +174,6 @@ def process_similar_matrix(bins, seqs, t, n):
 
     return bins
 
-def scalefactor(counts):
-    # mask inf and nan
-    ma = np.ma.masked_invalid(counts)
-    return np.exp(np.ma.median(ma))
-
-def write_table(d, norm=False):
-    if norm:
-        df = pd.DataFrame(d)
-        # log of counts
-        lg = df.apply(np.log)
-        # per sample: exponential(median(log(counts) - geometric mean))
-        sf = lg.sub(lg.mean(axis=1), axis=0).apply(scalefactor, axis=0)
-        # apply scaling
-        df = df.div(sf, axis=1)
-    else:
-        df = pd.DataFrame(d)
+def write_table(d):
+    df = pd.DataFrame(d)
     df.to_csv(sys.stdout, sep="\t")
