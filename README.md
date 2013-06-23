@@ -31,8 +31,8 @@ positional arguments:
 
 optional arguments:
   -h, --help   show this help message and exit
-  -c CUTOFF    minimum allowable seq length [18]
-  -m MISMATCH  mismatch tolerance when grouping bins [3]
+  -c CUTOFF    minimum allowable seq length (default: 18)
+  -m MISMATCH  mismatch tolerance when grouping bins (default: 3)
 ```
 
 ##Finding consensus of observed sequences
@@ -47,14 +47,14 @@ positional arguments:
 
 optional arguments:
   -h, --help   show this help message and exit
-  -c CUTOFF    minimum allowable count [10]
-  -m MISMATCH  mismatch tolerance when grouping bins [3]
+  -c CUTOFF    minimum allowable count (default: 100)
+  -m MISMATCH  mismatch tolerance when grouping bins (default: 3)
 ```
 
 ##Counts of observed sequences across consensus bins
 
 ```
-usage: iqseq.py matrix [-h] [-c CUTOFF] [-m MISMATCH]
+usage: iqseq.py matrix [-h] [-c CUTOFF] [-m MISMATCH] [-n]
                        CONSENSUS COUNTS [COUNTS ...]
 
 Generate counts matrix
@@ -65,6 +65,10 @@ positional arguments:
 
 optional arguments:
   -h, --help   show this help message and exit
-  -c CUTOFF    minimum allowable count for individual sample sequences [100]
-  -m MISMATCH  mismatch tolerance when grouping bins [3]
+  -c CUTOFF    minimum allowable count for individual sample sequences
+               (default: 100)
+  -m MISMATCH  mismatch tolerance when grouping bins (default: 3)
+  -n           output scaling factor normalized table using method developed
+               by Anders and Huber for DESeq:
+               http://genomebiology.com/2010/11/10/R106 (default: False)
 ```
