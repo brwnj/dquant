@@ -104,14 +104,12 @@ if __name__ == '__main__':
     fmat.add_argument("counts", metavar="COUNTS", nargs="+",
             help="results of `quantify`")
     fmat.add_argument('-c', dest='cutoff', type=int, default=100,
-            help=("minimum allowable count for individual sample "
-                    "sequences"))
+            help=("minimum allowable count for individual sample sequences"))
     fmat.add_argument("-m", dest="mismatch", type=int, default=3,
             help="mismatch tolerance when grouping bins")
     fmat.add_argument("-n", dest="norm", action="store_true",
-            help=("output scaling factor normalized table using method "
-                    "developed by Anders and Huber for DESeq: "
-                    "http://genomebiology.com/2010/11/10/R106"))
+            help=("output scaling factor normalized table using "
+                    "DESeq [Anders and Huber, 2010] method"))
     fmat.set_defaults(func=run_matrix)
     
     args = p.parse_args()

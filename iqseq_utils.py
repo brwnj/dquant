@@ -154,25 +154,19 @@ def process_similar_matrix(bins, seqs, t, n):
     sample_seqs.sort(key=len, reverse=True)
     to_process = len(sample_seqs)
     progress = 100
-    
     for i, seq in enumerate(sample_seqs, start=1):
-        
         if i % progress == 0:
             progress = int(progress * 1.5)
             print >>sys.stderr, "    >> processed {i} of {to_process}".format(**locals())
-        
         # returning bins to which the sequence belongs
         for (k, v, dist) in unique_everseen(t.get_approximate(seq, n), lambda (m,c,d): m):
-
             if type(v) is int:
                 bins[k] += seqs[seq]
                 # set to zero? avoids adding counts to multiple bins
                 seqs[seq] = 0
-
             else:
                 bins[v] += seqs[seq]
                 seqs[seq] = 0
-
     return bins
 
 def scalefactor(counts):
@@ -182,6 +176,7 @@ def scalefactor(counts):
 
 def write_table(d, norm=False):
     if norm:
+        # details: http://genomebiology.com/2010/11/10/R106
         df = pd.DataFrame(d)
         # log of counts
         lg = df.apply(np.log)
