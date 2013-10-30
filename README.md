@@ -1,6 +1,7 @@
-#iqseq
+#Sequence clustering pipeline
 
-De novo identification and quantification of sequence data.
+De novo identification and quantification of sequence data utilizing sequence
+clustering algorithms SEED and CD-HIT (to be implemented soon).
 
 ```
 usage: iqseq.py [-h] [-v] {consensus,quantify,matrix} ...
