@@ -55,21 +55,21 @@ optional arguments:
 ##Counts of observed sequences across consensus bins
 
 ```
-usage: iqseq.py matrix [-h] [-c CUTOFF] [-m MISMATCH] [-n]
+usage: iqseq.py matrix [-h] [-c CUTOFF] [-m MISMATCH] [-n {deseq,totalcount}]
                        CONSENSUS COUNTS [COUNTS ...]
 
 Generate counts matrix
 
 positional arguments:
-  CONSENSUS    result of `consensus`
-  COUNTS       results of `quantify`
+  CONSENSUS             result of `consensus`
+  COUNTS                results of `quantify`
 
 optional arguments:
-  -h, --help   show this help message and exit
-  -c CUTOFF    minimum allowable count for individual sample sequences
-               (default: 100)
-  -m MISMATCH  mismatch tolerance when grouping bins (default: 3)
-  -n           output scaling factor normalized table using method developed
-               by Anders and Huber for DESeq:
-               http://genomebiology.com/2010/11/10/R106 (default: False)
+  -h, --help            show this help message and exit
+  -c CUTOFF             minimum allowable count for individual sample
+                        sequences (default: 100)
+  -m MISMATCH           mismatch tolerance when grouping bins (default: 3)
+  -n {deseq,totalcount}
+                        output normalized table using either DESeq or total
+                        count method (default: None)
 ```
