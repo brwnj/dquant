@@ -155,7 +155,7 @@ def process_similar_matrix(bins, seqs, t, n):
     seqs - sequences to bin
     t    - trie
     n    - mismatches
-    
+
     returns Counter
     """
     sample_seqs = list(seqs)
@@ -196,6 +196,7 @@ def write_table(d, library_sizes, norm=None):
         df = pd.DataFrame(d)
         mean_total_count = float(sum(library_sizes.values())) / len(library_sizes)
         # apply total count scaling
+        # df = df.apply(lambda x: (x / x.sum()) * mean_total_count)
         for col in df.columns:
             denominator = float(library_sizes[col])
             assert denominator > 0, \
@@ -272,7 +273,7 @@ if __name__ == '__main__':
     import argparse
     p = argparse.ArgumentParser(description=__doc__, version=__version__)
     subp = p.add_subparsers(help='commands')
-    
+
     fquant = subp.add_parser('quantify',
             description=("Find and quantify unique and similar sequences "
                             "within a FASTQ."),
@@ -284,7 +285,7 @@ if __name__ == '__main__':
     fquant.add_argument("-m", dest="mismatch", type=int, default=3,
             help="mismatch tolerance when grouping bins")
     fquant.set_defaults(func=run_quantify)
-    
+
     fcons = subp.add_parser('consensus',
             description="Build consensus of sequences across all samples.",
             formatter_class=argparse.ArgumentDefaultsHelpFormatter,
@@ -296,7 +297,7 @@ if __name__ == '__main__':
     fcons.add_argument('-m', dest='mismatch', type=int, default=3,
             help="mismatch tolerance when grouping bins")
     fcons.set_defaults(func=run_consensus)
-    
+
     fmat = subp.add_parser('matrix', description="Generate counts matrix",
             formatter_class=argparse.ArgumentDefaultsHelpFormatter,
             help="generate counts matrix")
@@ -311,6 +312,6 @@ if __name__ == '__main__':
     fmat.add_argument("-n", dest="norm", default=None, choices=['deseq', 'totalcount'],
             help=("output normalized table using either DESeq or total count method"))
     fmat.set_defaults(func=run_matrix)
-    
+
     args = p.parse_args()
     main(args)

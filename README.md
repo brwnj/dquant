@@ -4,7 +4,7 @@ De novo identification and quantification of sequence data utilizing sequence
 clustering algorithms SEED and CD-HIT (to be implemented soon).
 
 ```
-usage: iqseq.py [-h] [-v] {consensus,quantify,matrix} ...
+usage: sequence_clustering.py [-h] [-v] {consensus,quantify,matrix} ...
 
 De novo identification and quantification of sequence data.
 
@@ -23,7 +23,7 @@ optional arguments:
 ##Quantifying sequences in FASTQ
 
 ```
-usage: iqseq.py quantify [-h] [-c CUTOFF] [-m MISMATCH] FASTQ
+usage: sequence_clustering.py quantify [-h] [-c CUTOFF] [-m MISMATCH] FASTQ
 
 Find and quantify unique and similar sequences within a FASTQ.
 
@@ -39,7 +39,8 @@ optional arguments:
 ##Finding consensus of observed sequences
 
 ```
-usage: iqseq.py consensus [-h] [-c CUTOFF] [-m MISMATCH] BINS [BINS ...]
+usage: sequence_clustering.py consensus [-h] [-c CUTOFF] [-m MISMATCH]
+                                        BINS [BINS ...]
 
 Build consensus of sequences across all samples.
 
@@ -55,8 +56,9 @@ optional arguments:
 ##Counts of observed sequences across consensus bins
 
 ```
-usage: iqseq.py matrix [-h] [-c CUTOFF] [-m MISMATCH] [-n {deseq,totalcount}]
-                       CONSENSUS COUNTS [COUNTS ...]
+usage: sequence_clustering.py matrix [-h] [-c CUTOFF] [-m MISMATCH]
+                                     [-n {deseq,totalcount}]
+                                     CONSENSUS COUNTS [COUNTS ...]
 
 Generate counts matrix
 
