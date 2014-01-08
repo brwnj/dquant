@@ -1,7 +1,11 @@
 #Sequence clustering pipeline
 
-De novo identification and quantification of sequence data utilizing sequence
-clustering algorithms SEED and CD-HIT (to be implemented soon).
+De novo identification and quantification of sequence data utilizing edit distance
+as a metric to group similar sequences. Sequences are paired longest to shortest.
+
+There are many algorithms to accomplish a similar goal and many that better
+account for sequence identity matching without the bias using longer sequences
+first.
 
 ```
 usage: sequence_clustering.py [-h] [-v] {consensus,quantify,matrix} ...
